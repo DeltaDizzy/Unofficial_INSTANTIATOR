@@ -24,10 +24,10 @@ namespace INSTANTIATOR
        {
           CelestialBody targetbody = FlightGlobals.GetBodyByName(body);
           Debug.Log(INSTANTIATOR.Log("Initializing LocalSound: " + name + " around body " + body + "."));
-          GameObject soundsource = GameObject.AddComponent(AudioSource);
+          GameObject soundSource = GameObject.AddComponent(AudioSource);
         
-          obj.transform.SetParent(targetbody.scaledbody.transform);
-          obj.transform.localPosition = Vector3.zero;
+          soundSource.transform.SetParent(targetbody.scaledbody.transform);
+          soundSource.transform.localPosition = Vector3.zero;
           
        }
     }
