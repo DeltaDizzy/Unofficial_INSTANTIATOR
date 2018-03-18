@@ -21,7 +21,15 @@ namespace INSTANTIATOR
         public bool ignoreLight;
         public ScaledObject(string n, string b, string s, string sh, string r, string inv, string tex, string type, string ignoreLight)
         {
-            name = n; body = b; scale = ConfigNode.ParseVector3(s); shader = Shader.Find(sh); rotation = Quaternion.Euler(ConfigNode.ParseVector3(r)); invertNormals = bool.Parse(inv); this.tex = GameDatabase.Instance.GetTexture(tex, false); this.type = type; this.ignoreLight = bool.Parse(ignoreLight);
+            name = n; 
+            body = b; 
+            scale = ConfigNode.ParseVector3(s); 
+            shader = Shader.Find(sh); 
+            rotation = Quaternion.Euler(ConfigNode.ParseVector3(r)); 
+            invertNormals = bool.Parse(inv); 
+            this.tex = GameDatabase.Instance.GetTexture(tex, false); 
+            this.type = type;
+            this.ignoreLight = bool.Parse(ignoreLight);
         }
 
         //From the original INSTANTIATOR code by Artyomka15
@@ -107,7 +115,7 @@ namespace INSTANTIATOR
             //If we found no objects, we quit.
             if (foundObjects.Length < 1)
             {
-                Debug.LogWarning("[INSTANTIATOR}: No config files found. Shutting down.");
+                Debug.LogWarning("[INSTANTIATOR]: No config files found. Shutting down.");
                 return;
             }
 
