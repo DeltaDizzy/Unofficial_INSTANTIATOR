@@ -95,37 +95,7 @@ namespace INSTANTIATOR
         }
     }
 
-    public struct LocalSound
-    {
-       public string name;
-       public string body;
-       public string filePath;
-       public int outerSoundRadius;
-       public int innerSoundRadius;
-       public bool loop;
-       public LocalSound(string n, string b, string fp, string osr, string isr, string l)
-       {
-         name = n;
-         body = b;
-         filePath = fp;
-         outerSoundRadius = int.Parse(osr);
-         innerSoundRadius = int.Parse(isr);
-         loop = bool.Parse(l);
-       }
-     
-       internal void InitSound()
-       {
-          Debug.Log(INSTANTIATOR.Log("Initializing LocalSounds"));
-          CelestialBody targetbody = FlightGlobals.GetBodyByName(body);
-          GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-          
-          int bodyAltitude = (int)FlightGlobals.activeVessel.altitude;
-          if(bodyAltitude >= innerSoundRadius && bodyAltitude <= outerSoundRadius)
-          { 
-             //TODO: Create GameObject, attach AudioSource to it, attach to planet, attach audiolisteer to ship, play clip
-          }
-       }
-    }
+    
     //Startup on planetary system spawn
     [KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
     public class INSTANTIATOR : MonoBehaviour
