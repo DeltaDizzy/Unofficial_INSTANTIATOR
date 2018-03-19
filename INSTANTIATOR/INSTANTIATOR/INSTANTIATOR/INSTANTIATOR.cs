@@ -22,6 +22,7 @@ namespace INSTANTIATOR
         {
 
             System.Collections.Generic.List<ScaledObject> objList = new System.Collections.Generic.List<ScaledObject>();
+            System.Collections.Generic.List<LocalAudio> audioList = new System.Collections.Generic.List<LocalAudio>();
             
             foundObjects = GameDatabase.Instance.GetConfigs("INSTANTIATOR"); //Grab all INSTANTIATOR nodes
 
@@ -36,11 +37,17 @@ namespace INSTANTIATOR
             foreach(UrlDir.UrlConfig config in foundObjects)
             {
                 //In each INSTANTIATOR node, index all SCALED_OBJECT nodes
-                foreach(ConfigNode ObjNode in config.config.GetNodes("SCALED_OBJECT"))
+                foreach (ConfigNode ObjNode in config.config.GetNodes("SCALED_OBJECT"))
                 {
                     //Make a new entry
-                    objList.Add(new ScaledObject(ObjNode.GetValue("Name"),ObjNode.GetValue("Body"), ObjNode.GetValue("Scale"), ObjNode.GetValue("Shader"), ObjNode.GetValue("Rotation"), ObjNode.GetValue("InvertNormals"), ObjNode.GetValue("Texture"), ObjNode.GetValue("Type"), ObjNode.GetValue("IgnoreLight")));
+                    objList.Add(new ScaledObject(ObjNode.GetValue("Name"), ObjNode.GetValue("Body"), ObjNode.GetValue("Scale"), ObjNode.GetValue("Shader"), ObjNode.GetValue("Rotation"), ObjNode.GetValue("InvertNormals"), ObjNode.GetValue("Texture"), ObjNode.GetValue("Type"), ObjNode.GetValue("IgnoreLight")));
                 }
+
+                foreach (ConfigNode AudioNode in config.config.GetNodes("LOCAL_AUDIO"))
+                {
+                    audioList.Add(new LocalAudio(AudioNode.GetValue("Name"), AudioNode.GetValue("Body"), AudioNode.GetValue("audioPath"), AudioNode.GetValue("audioRadius")));
+                }
+
             }
 
             //Now, we execute
@@ -48,25 +55,38 @@ namespace INSTANTIATOR
             {
                 o.Build();
             }
+            foreach (LocalAudio a in audioList)
+            {
+                a.InitSound();
+            }
         }
 
+        void Update()
+        {
+                if (FlightGlobals.ActiveVessel.altitude <= LocalAudio.audioRadius)
+                {
+                    if (LocalAudio.soundSource.isPlaying && LocalAudio.clipReady == AudioDataLoadState.Loaded)
+                    {
+                        LocalAudio.soundSource.Play();
+                        LocalAudio.soundSource.maxDistance = (float)LocalAudio.audioRadius;
+                        LocalAudio.soundSource.loop = true;
+                    }
+                }
+            if (FlightGlobals.ActiveVessel.altitude >= LocalAudio.audioRadius)
+            {
+                LocalAudio.soundSource.Stop();
+            }
+        }
         static void Log(string msg)
         {
             Debug.Log("[INSTANTIATOR]: " + msg);
         }
-        
-
-        
-
-
-
-
 
 
 
         /*
         /// <summary>
-        /// Prodcesses a SCALED_OBJECT node
+        /// Processes a SCALED_OBJECT node
         /// </summary>
         /// <param name="node">The SCALED_OBJECT node to be edited</param>
         void ProcessObjNode(ConfigNode node)
