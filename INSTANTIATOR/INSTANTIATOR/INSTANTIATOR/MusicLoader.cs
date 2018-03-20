@@ -35,10 +35,13 @@ namespace INSTANTIATOR
                         case ".OGG":
                             return LoadUnityAudioClip(file);
                         default:
-                            INSTANTIATOR.Log("Unknown extension found: " + ext);
+                            INSTANTIATOR.Log("What kind of file are you even trying to play? What's a " + ext + "file?");
                             break;
                     }
                 }
             }
-  }
+            //LEts load the GameDtabase instead
+             AudioClip databaseClip = GameDatabase.Instance.GetAudioClip(name);
+        }   
+    }
 }
