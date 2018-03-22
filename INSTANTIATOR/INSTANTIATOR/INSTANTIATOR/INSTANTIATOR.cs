@@ -65,7 +65,7 @@ namespace INSTANTIATOR
         {
                 if (FlightGlobals.ActiveVessel.altitude <= LocalAudio.audioRadius)
                 {
-                    if (LocalAudio.soundSource.isPlaying && LocalAudio.clipReady == AudioDataLoadState.Loaded)
+                    if (!LocalAudio.soundSource.isPlaying && LocalAudio.clipReady == AudioDataLoadState.Loaded)
                     {
                         LocalAudio.soundSource.Play();
                         LocalAudio.soundSource.maxDistance = (float)LocalAudio.audioRadius;

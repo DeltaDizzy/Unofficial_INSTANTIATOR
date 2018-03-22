@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.IO;
 
 namespace INSTANTIATOR
 {
@@ -19,6 +20,21 @@ namespace INSTANTIATOR
             audioRadius = int.Parse(ar);
        }
 
+        IEnumerator LoadFile(string path)
+        {
+            WWW www = new WWW("file://" + path);
+            Debug.Log("Loading audio at: " + path);
+
+            AudioClip clip = www.GetAudioClip(false);
+            while (!clip.isReadyToPlay)
+                yield return www;
+
+            Debug.Log("Audio Loaded");
+            clip.name = Path.GetFileName(path);
+            AudioClip databaseClip = GameDatabase.Instance.GetAudioClip(name);
+
+        }
+
         public static AudioDataLoadState clipReady = new AudioDataLoadState();
         public static CelestialBody targetbody = FlightGlobals.GetBodyByName(body);
         internal void InitSound()
@@ -26,12 +42,11 @@ namespace INSTANTIATOR
           
           Debug.Log("[INSTANTIATOR]: Initializing LocalSound: " + name + " around body " + body + ".");
             
-            WWW getClip = new WWW(audioPath);
         
           soundSource.transform.SetParent(targetbody.scaledBody.transform);
           soundSource.transform.localPosition = Vector3.zero;
           soundSource.name = name;
-          soundSource.clip = getClip.audioClip;
+          soundSource.clip = 
           
        }
 

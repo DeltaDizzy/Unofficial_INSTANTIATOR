@@ -4,3 +4,7 @@ C:\Users\DeltaDizzy\Documents\GitHub\Unofficial_INSTANTIATOR\INSTANTIATOR\INSTAN
 C:\Users\DeltaDizzy\Documents\GitHub\Unofficial_INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\obj\Debug\INSTANTIATOR.csproj.CoreCompileInputs.cache
 C:\Users\DeltaDizzy\Documents\GitHub\Unofficial_INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\obj\Debug\INSTANTIATOR.dll
 C:\Users\DeltaDizzy\Documents\GitHub\Unofficial_INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\obj\Debug\INSTANTIATOR.pdb
+C:\Users\DeltaDizzy\Documents\GitHub\Unofficial_INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\bin\Debug\Assembly-UnityScript.dll
+C:\Users\DeltaDizzy\Documents\GitHub\Unofficial_INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\bin\Debug\UnityEngine.Networking.dll
+C:\Users\DeltaDizzy\Documents\GitHub\Unofficial_INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\bin\Debug\UnityScript.Lang.dll
+C:\Users\DeltaDizzy\Documents\GitHub\Unofficial_INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\INSTANTIATOR\bin\Debug\Boo.Lang.dll
