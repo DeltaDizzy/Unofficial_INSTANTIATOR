@@ -6,9 +6,11 @@ namespace INSTANTIATOR
 {
     public class LocalAudio
     {
-        public static AudioSource soundSource = new GameObject().AddComponent<AudioSource>() as AudioSource;
-
-        public static string name;
+        //Create AudioSource
+       public static AudioSource soundSource = new GameObject().AddComponent<AudioSource>() as AudioSource;
+        
+       //parser 
+       public static string name;
        public static string body;
        public static string audioPath;
        public static int audioRadius;
@@ -19,7 +21,25 @@ namespace INSTANTIATOR
             audioPath = mp;
             audioRadius = int.Parse(ar);
        }
-
+       
+        //Set path to music directory
+        private string _audiopath;
+        public string AudioPath
+        {
+            get
+            {
+                
+                if (String.IsNullOrEmpty(_audioPath))
+                {
+                    _audioPath = Directory.GetParent(KSPUtil.ApplicationRootPath).FullName.ToString().Replace("\\", "/") + "/Audio";
+                    INSTANTIATOR.Log("Music path is: " + _musicPath);
+                }
+                return _audioPath;
+            }
+        }
+        
+        Directory.CreateDirectory(AudioPath);
+        
         IEnumerator LoadFile(string path)
         {
             WWW www = new WWW("file://" + path);
