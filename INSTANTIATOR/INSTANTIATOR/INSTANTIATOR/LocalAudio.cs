@@ -8,7 +8,7 @@ namespace INSTANTIATOR
     {
         public static AudioSource soundSource = new GameObject().AddComponent<AudioSource>() as AudioSource;
 
-        public static string name;
+       public static string name;
        public static string body;
        public static string audioPath;
        public static int audioRadius;
@@ -25,7 +25,8 @@ namespace INSTANTIATOR
             WWW www = new WWW("file://" + path);
             Debug.Log("Loading audio at: " + path);
 
-            AudioClip clip = www.GetAudioClip(false);
+            AudioClip clip = AudioClip.LoadAudioData();
+            //clip = www.GetAudioClip(false);
             while (!clip.isReadyToPlay)
                 yield return www;
 
