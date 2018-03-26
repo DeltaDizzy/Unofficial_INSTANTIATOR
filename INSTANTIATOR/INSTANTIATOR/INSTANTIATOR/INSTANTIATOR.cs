@@ -8,93 +8,6 @@ using UnityEngine;
 
 namespace INSTANTIATOR
 {
-    public struct ScaledObject
-    {
-        public string name;
-        public string body;
-        public Vector3 scale;
-        public Shader shader;
-        public Quaternion rotation;
-        public bool invertNormals;
-        public Texture2D tex;
-        public string type;
-        public bool ignoreLight;
-        public ScaledObject(string n, string b, string s, string sh, string r, string inv, string tex, string type, string ignoreLight)
-        {
-            name = n; 
-            body = b; 
-            scale = ConfigNode.ParseVector3(s); 
-            shader = Shader.Find(sh); 
-            rotation = Quaternion.Euler(ConfigNode.ParseVector3(r)); 
-            invertNormals = bool.Parse(inv); 
-            this.tex = GameDatabase.Instance.GetTexture(tex, false); 
-            this.type = type;
-            this.ignoreLight = bool.Parse(ignoreLight);
-        }
-
-        //From the original INSTANTIATOR code by Artyomka15
-        static void InvertNormals(MeshFilter filter)
-        {
-            //Grab the mesh
-            Mesh mesh = filter.mesh;
-
-            Vector3[] normals = mesh.normals;
-            for (int i = 0; i < normals.Length; i++) { normals[i] = -normals[i]; }
-            mesh.normals = normals;
-
-            for (int x = 0; x < mesh.subMeshCount; x++)
-            {
-                int[] tris = mesh.GetTriangles(x);
-                for (int y = 0; y < tris.Length; y += 3)
-                {
-                    int temp = tris[y];
-                    tris[y] = tris[y + 1];
-                    tris[y + 1] = temp;
-                }
-                mesh.SetTriangles(tris, x);
-            }
-        }
-
-        /// <summary>
-        /// Builds a ScaledObject
-        /// </summary>
-        internal void Build()
-        {
-            Debug.Log("[INSTANTIATOR_ScaledObject]: Building object [" + name + "].");
-            CelestialBody targetBody = FlightGlobals.GetBodyByName(body);
-            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            
-            if (type == "Billboard")
-            {
-                obj.transform.SetParent(targetBody.scaledBody.GetComponentInChildren<SunCoronas>().transform);
-                obj.transform.localPosition = Vector3.zero;
-                obj.transform.localScale = scale;
-                obj.GetComponent<Renderer>().material.shader = shader;
-                obj.GetComponent<Renderer>().material.SetTexture("_MainTex", tex);
-                obj.layer = targetBody.scaledBody.layer;
-                obj.name = name;
-            }
-            else
-            {
-                obj.transform.SetParent(targetBody.scaledBody.transform);
-                if (type == "Sphere")
-                {
-                    obj.GetComponent<MeshFilter>().mesh = FlightGlobals.GetBodyByName("Sun").scaledBody.GetComponentInChildren<MeshFilter>().mesh;
-                }
-                obj.GetComponent<MeshFilter>().mesh.RecalculateBounds();
-                obj.GetComponent<MeshFilter>().mesh.RecalculateNormals();
-                obj.transform.localPosition = Vector3.zero;
-                obj.transform.localScale = scale;
-                obj.GetComponent<Renderer>().material.shader = shader;
-                obj.GetComponent<Renderer>().material.SetTexture("_MainTex", tex);
-                obj.transform.rotation = rotation;
-                if (ignoreLight) obj.layer = 9; else obj.layer = 10;
-                obj.name = name;
-                if (invertNormals) InvertNormals(obj.GetComponent<MeshFilter>());
-            }
-        }
-    }
-
     //Startup on planetary system spawn
     [KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
     public class INSTANTIATOR : MonoBehaviour
@@ -109,6 +22,7 @@ namespace INSTANTIATOR
         {
 
             System.Collections.Generic.List<ScaledObject> objList = new System.Collections.Generic.List<ScaledObject>();
+            System.Collections.Generic.List<LocalAudio> audioList = new System.Collections.Generic.List<LocalAudio>();
             
             foundObjects = GameDatabase.Instance.GetConfigs("INSTANTIATOR"); //Grab all INSTANTIATOR nodes
 
@@ -123,11 +37,17 @@ namespace INSTANTIATOR
             foreach(UrlDir.UrlConfig config in foundObjects)
             {
                 //In each INSTANTIATOR node, index all SCALED_OBJECT nodes
-                foreach(ConfigNode ObjNode in config.config.GetNodes("SCALED_OBJECT"))
+                foreach (ConfigNode ObjNode in config.config.GetNodes("SCALED_OBJECT"))
                 {
                     //Make a new entry
-                    objList.Add(new ScaledObject(ObjNode.GetValue("Name"),ObjNode.GetValue("Body"), ObjNode.GetValue("Scale"), ObjNode.GetValue("Shader"), ObjNode.GetValue("Rotation"), ObjNode.GetValue("InvertNormals"), ObjNode.GetValue("Texture"), ObjNode.GetValue("Type"), ObjNode.GetValue("IgnoreLight")));
+                    objList.Add(new ScaledObject(ObjNode.GetValue("Name"), ObjNode.GetValue("Body"), ObjNode.GetValue("Scale"), ObjNode.GetValue("Shader"), ObjNode.GetValue("Rotation"), ObjNode.GetValue("InvertNormals"), ObjNode.GetValue("Texture"), ObjNode.GetValue("Type"), ObjNode.GetValue("IgnoreLight")));
                 }
+
+                foreach (ConfigNode AudioNode in config.config.GetNodes("LOCAL_AUDIO"))
+                {
+                    audioList.Add(new LocalAudio(AudioNode.GetValue("Name"), AudioNode.GetValue("Body"), AudioNode.GetValue("audioPath"), AudioNode.GetValue("audioRadius")));
+                }
+
             }
 
             //Now, we execute
@@ -135,25 +55,38 @@ namespace INSTANTIATOR
             {
                 o.Build();
             }
+            foreach (LocalAudio a in audioList)
+            {
+                a.InitSound();
+            }
         }
 
+        void Update()
+        {
+                if (FlightGlobals.ActiveVessel.altitude <= LocalAudio.audioRadius)
+                {
+                    if (!LocalAudio.soundSource.isPlaying && LocalAudio.clipReady == AudioDataLoadState.Loaded)
+                    {
+                        LocalAudio.soundSource.Play();
+                        LocalAudio.soundSource.maxDistance = (float)LocalAudio.audioRadius;
+                        LocalAudio.soundSource.loop = true;
+                    }
+                }
+            if (FlightGlobals.ActiveVessel.altitude >= LocalAudio.audioRadius)
+            {
+                LocalAudio.soundSource.Stop();
+            }
+        }
         static void Log(string msg)
         {
             Debug.Log("[INSTANTIATOR]: " + msg);
         }
-        
-
-        
-
-
-
-
 
 
 
         /*
         /// <summary>
-        /// Prodcesses a SCALED_OBJECT node
+        /// Processes a SCALED_OBJECT node
         /// </summary>
         /// <param name="node">The SCALED_OBJECT node to be edited</param>
         void ProcessObjNode(ConfigNode node)
