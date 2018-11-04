@@ -33,14 +33,8 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\Desktop\KSP stuff\Historical Progression\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\Kerbal Space Program_1.3\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-UnityScript">
       <HintPath>..\..\Kerbal Space Program_1.3\KSP_Data\Managed\Assembly-UnityScript.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-UnityScript-firstpass">
-      <HintPath>..\..\Kerbal Space Program_1.3\KSP_Data\Managed\Assembly-UnityScript-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="INSTANTIATOR.cs" />
+    <Compile Include="ScaledObject.cs" />
+    <Compile Include="LocalAudio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
