@@ -4,10 +4,20 @@ using System.IO;
 
 namespace INSTANTIATOR
 {
-    public class LocalAudio
+    public class LocalAudio : MonoBehaviour
     {
         public static AudioSource soundSource = new GameObject().AddComponent<AudioSource>() as AudioSource;
 
+        Vessel soundVessel = FlightGlobals.ActiveVessel;
+        private static string _audioPath;
+        public static string AudioPath { get; set; }
+    
+        public static double minDistance = 1;
+        public static double maxDistance = FlightGlobals.ActiveVessel.altitude + 10;
+        public static bool loop = true;
+        public static float volume = 1;
+        
+       //parser 
        public static string name;
        public static string body;
        public static string audioPath;
@@ -19,38 +29,20 @@ namespace INSTANTIATOR
             audioPath = mp;
             audioRadius = int.Parse(ar);
        }
-
-        IEnumerator LoadFile(string path)
+       
+        
+        public void InitandPlay()
         {
-            WWW www = new WWW("file://" + path);
-            Debug.Log("Loading audio at: " + path);
+            AudioClip audioClip = GameDatabase.Instance.GetAudioClip(name);
 
-            AudioClip clip = AudioClip.LoadAudioData();
-            //clip = www.GetAudioClip(false);
-            while (!clip.isReadyToPlay)
-                yield return www;
-
-            Debug.Log("Audio Loaded");
-            clip.name = Path.GetFileName(path);
-            AudioClip databaseClip = GameDatabase.Instance.GetAudioClip(name);
-
+            soundSource.clip = audioClip;
+            soundSource.playOnAwake = true;
+            soundSource.spatialBlend = 1f;
+            soundSource.rolloffMode = AudioRolloffMode.Linear;
+            if(soundVessel.altitude <= audioRadius)
+            {
+                soundSource.Play();
+            }
         }
-
-        public static AudioDataLoadState clipReady = new AudioDataLoadState();
-        public static CelestialBody targetbody = FlightGlobals.GetBodyByName(body);
-        internal void InitSound()
-       {
-          
-          Debug.Log("[INSTANTIATOR]: Initializing LocalSound: " + name + " around body " + body + ".");
-            
-        
-          soundSource.transform.SetParent(targetbody.scaledBody.transform);
-          soundSource.transform.localPosition = Vector3.zero;
-          soundSource.name = name;
-          soundSource.clip = 
-          
-       }
-
-        
     }
 }

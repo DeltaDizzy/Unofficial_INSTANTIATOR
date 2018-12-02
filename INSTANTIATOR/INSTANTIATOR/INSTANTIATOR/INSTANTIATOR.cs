@@ -57,7 +57,7 @@ namespace INSTANTIATOR
             }
             foreach (LocalAudio a in audioList)
             {
-                a.InitSound();
+                a.InitandPlay();
             }
         }
 
@@ -65,10 +65,10 @@ namespace INSTANTIATOR
         {
                 if (FlightGlobals.ActiveVessel.altitude <= LocalAudio.audioRadius)
                 {
-                    if (!LocalAudio.soundSource.isPlaying && LocalAudio.clipReady == AudioDataLoadState.Loaded)
+                    if (!LocalAudio.soundSource.isPlaying)
                     {
                         LocalAudio.soundSource.Play();
-                        LocalAudio.soundSource.maxDistance = (float)LocalAudio.audioRadius;
+                        LocalAudio.soundSource.maxDistance = LocalAudio.audioRadius;
                         LocalAudio.soundSource.loop = true;
                     }
                 }
